@@ -1,0 +1,121 @@
+---
+title: "Kaggle - MNIST Digit Recognizer"
+author: "Sameh Awaida"
+date: "12/15/2016"
+output: html_document
+---
+
+```{r Setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(randomForest)
+library(readr)
+library(ggplot2)
+library(proto)
+library(grid)
+
+rowToMatrix <- function(row) {
+  intensity <- as.numeric(row)/max(as.numeric(row))
+  return(t(matrix((rgb(intensity, intensity, intensity)), 28, 28)))
+}
+
+geom_digit <- function(digits) 
+{
+  layer(geom = GeomRasterDigit, stat = "identity", position = "identity", data = NULL, 
+        params = list(digits=digits))  
+}
+
+plotSampleImages <- function(rowsToPlot, labelsToPlot, titleText, dataSet)
+{
+      p <- ggplot(data.frame(rows=rowsToPlot, labels=labelsToPlot), aes(x=0.1, y=.9, rows=rows, label=labels)) + 
+       geom_blank() + xlim(0,1) + ylim(0,1) + xlab("") + ylab("") + 
+       facet_wrap(~ rows, ncol=7) +
+       geom_digit(dataSet) +
+       geom_text(colour="#53cfff") +
+       theme(panel.background = element_rect(fill = 'black'),
+             panel.border = element_rect(fill = NA, colour = "#cfff53"),
+             panel.grid = element_blank(),
+             strip.background = element_blank(),
+             strip.text.x = element_blank(),
+             axis.text.x = element_blank(),
+             axis.text.y = element_blank(),
+             axis.ticks = element_blank(),
+             axis.line = element_blank()) +
+       ggtitle(titleText)
+      return(p)
+}
+
+```
+
+# Classify handwritten digits using the famous MNIST data
+
+The goal in this competition is to take an image of a handwritten single digit, and determine what that digit is.  For more details on this competition, see <https://www.kaggle.com/c/digit-recognizer>.
+
+The data for this competition were taken from the MNIST dataset. The MNIST ("Modified National Institute of Standards and Technology") dataset is a classic within the Machine Learning community that has been extensively studied.  More detail about the dataset, including Machine Learning algorithms that have been tried on it and their levels of success, can be found at <http://yann.lecun.com/exdb/mnist/index.html>.
+
+## Loading & Visualizing Data
+
+The code reads both training & testing datasets, and plots a random 49 images from the training set. More info can be found at <https://www.kaggle.com/benhamner/digit-recognizer/example-handwritten-digits/code>.
+
+```{r Data Loading & Visualization}
+# Load Training & Testing DataSet 
+trainSetOriginal <- data.frame(read_csv("./input/train.csv"))
+testFeatures <- data.frame(read_csv("./input/test.csv"))
+
+# Plots 49 random handwritten digits drawn from the training set
+trainLabels   = as.factor(trainSetOriginal[,1])
+trainFeatures <- trainSetOriginal[,-1]
+
+# Normalize means for images
+#trainFeaturesColMeans <- apply(trainFeatures, 2, mean)
+#trainFeaturesNorm <- sweep(trainFeatures, 2, trainFeaturesColMeans,"-")
+#testFeaturesNorm  <- sweep(testFeatures, 2, trainFeaturesColMeans,"-")
+
+# Uncomment for reproducability
+# set.seed(1) 
+rowsToPlot <- sample(1:nrow(trainFeatures), 49)
+
+GeomRasterDigit <- ggproto("GeomRasterDigit", 
+                           ggplot2::GeomRaster, 
+                           draw_panel = function(data, panel_scales, coordinates, digits = digits) {
+                             if (!inherits(coordinates, "CoordCartesian")) {
+                               stop("geom_digit only works with Cartesian coordinates",
+                                    call. = FALSE)
+                             }
+                             corners <- data.frame(x = c(-Inf, Inf), y = c(-Inf, Inf))
+                             bounds <- coordinates$transform(corners, panel_scales)
+                             x_rng <- range(bounds$x, na.rm = TRUE)
+                             y_rng <- range(bounds$y, na.rm = TRUE)
+                             rasterGrob(as.raster(rowToMatrix(digits[data$rows,])), 
+                                        x = mean(x_rng), y = mean(y_rng), 
+                                        default.units = "native", just = c("center","center"), 
+                                        interpolate = FALSE)
+                           }) 
+
+p <- plotSampleImages(rowsToPlot = rowsToPlot, labelsToPlot = trainLabels[rowsToPlot], titleText = "Example Handwritten Digits", dataSet = trainFeatures)
+plot(p)
+ggsave("./visualization/example_input_digits.png", p, width=10, height=10)
+
+```
+
+## Simple Random Forest Benchmark
+
+A simple random forest benchmark, provided by [Kaggle Tutorials]<https://www.kaggle.com/benhamner/digit-recognizer/random-forest-benchmark> is shown below:
+
+```{r Random Forest Benchmark}
+# Creates a simple random forest benchmark
+# Uncomment for reproducability
+# set.seed(1) 
+numTrees <- 25
+
+rf <- randomForest(trainFeatures, trainLabels, xtest=testFeatures, ntree=numTrees)
+predictions <- data.frame(ImageId=1:nrow(testFeatures), Label=levels(trainLabels)[rf$test$predicted])
+head(predictions)
+write_csv(predictions, "./output/rf_benchmark.csv") 
+
+# Plotting prediction results
+rowsToPlot <- sample(1:nrow(testFeatures), 49)
+p <- plotSampleImages(rowsToPlot = rowsToPlot, labelsToPlot = rf$test$predicted[rowsToPlot], titleText = "Example Prediction for Handwritten Digits Using Simple Random Forest Benchmark", dataSet = testFeatures)
+plot(p)
+ggsave("./visualization/example_rf_prediction_digits.png", p, width=10, height=10)
+print('The RF Benchmark achieves 95.84% Accuracy Rate')
+```
