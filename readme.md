@@ -1,7 +1,7 @@
 ---
 title: "Kaggle - MNIST Digit Recognizer"
 author: "Sameh Awaida"
-date: "12/20/2016"
+date: "12/21/2016"
 output: html_document
 ---
 
@@ -15,10 +15,13 @@ The goal in this competition is to take an image of a handwritten single digit, 
 ## Results:
 
 
-In the Kaggle competition, CNN got the following results:
-* 10 training loops got 99.286% for a 148 poistion
-* 20 training loops got 99.414% for a 114 poistion
-* Random Forests using R got 95.84%
+The tutorial accuracy results are:
+
+
+- 40 training loops with an accuracy of 99.429% for a 113th position in the Kaggle competition
+- 20 training loops with an accuracy of 99.414% for a 114 position in the Kaggle competition
+- 10 training loops with an accuracy of 99.286% for a 148 position in the Kaggle competition
+- Random Forests using R got 95.84%
 
 ## Competition Data:
 
