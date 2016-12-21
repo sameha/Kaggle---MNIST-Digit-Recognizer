@@ -18,3 +18,11 @@ resources/iTorch/Getting+Started.ipynb
 resources/iTorch/train_32x32.t7
 
 resources/kaggle-mnist/
+
+itorch_digit_recognizer_cnn.ipynb
+
+input/test_32x32.t7
+
+input/train_32x32.t7
+
+input/train.csv
