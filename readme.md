@@ -24,10 +24,10 @@ For more details on this competition, see <https://www.kaggle.com/c/digit-recogn
 The tutorial accuracy results are:
 
 
-- 40 training loops with an accuracy of 99.429% for a 113th position in the Kaggle competition
-- 20 training loops with an accuracy of 99.414% for a 114 position in the Kaggle competition
-- 10 training loops with an accuracy of 99.286% for a 148 position in the Kaggle competition
-- Random Forests using R got 95.84%
+- CNN 40 training loops with an accuracy of 99.429% for a 113th position in the Kaggle competition.
+- CNN 20 training loops with an accuracy of 99.414% for a 114 position in the Kaggle competition.
+- CNN 10 training loops with an accuracy of 99.286% for a 148 position in the Kaggle competition.
+- Random Forests using R with an accuracy of 95.84%.
 
 ## Competition Data:
 
