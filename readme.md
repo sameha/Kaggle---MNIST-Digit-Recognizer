@@ -9,8 +9,14 @@ output: html_document
 # Classify handwritten digits using the famous MNIST data
 
 
-The goal in this competition is to take an image of a handwritten single digit, and determine what that digit is. For more details on this competition, see <https://www.kaggle.com/c/digit-recognizer>.
+The goal in this competition is to take an image of a handwritten single digit, and determine what that digit is. 
 
+For more details on this competition, see <https://www.kaggle.com/c/digit-recognizer>.
+
+## Classifiers:
+
+- [Using R Random Forests](https://github.com/sameha/Kaggle---MNIST-Digit-Recognizer/blob/master/r_digit_recognizer_random_forest.Rmd)
+- [Using Torch7 CNN](https://github.com/sameha/Kaggle---MNIST-Digit-Recognizer/blob/master/itorch_digit_recognizer_cnn.md)
 
 ## Results:
 

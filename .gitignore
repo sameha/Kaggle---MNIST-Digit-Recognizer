@@ -24,3 +24,7 @@ input/test_32x32.t7
 input/train_32x32.t7
 
 input/train.csv
+
+.ipynb_checkpoints/itorch_digit_recognizer_cnn-checkpoint.ipynb
+
+.ipynb_checkpoints/itorch_digit_recognizer_cnn-checkpoint.ipynb
